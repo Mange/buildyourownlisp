@@ -1,8 +1,8 @@
-= buildyourownlisp =
+# buildyourownlisp #
 
 Me teaching myself C by implementing a Lisp intepreter, loosly following the guide at [Build Your Own LISP](http://www.buildyourownlisp.com/).
 
-== Dependencies ==
+## Dependencies ##
 
 You need CMake to compile the project and [Check][check] to run tests.
 
@@ -10,7 +10,7 @@ The only supported platform right now is Mac OS X just beacuse I'm teaching myse
 
 If you're a sadomasochist, you could help me port this to Windows. I might just read your pull request before I close it.
 
-== Building ==
+## Building ##
 
 ```
 mkdir build
@@ -21,11 +21,11 @@ make
 
 Binaries will be placed in `./build/bin`.
 
-== Running tests ==
+## Running tests ##
 
 Build the project and run `ctest` from the `build` directory.
 
-== License ==
+## License ##
 
 Public domain. Do whatever you want. I claim no responsibility for the code.
 

@@ -1,5 +1,5 @@
-#ifndef LISPY_PARSING_H
-#define LISPY_PARSING_H 1
+#ifndef LISPY_PARSER_H
+#define LISPY_PARSER_H 1
 
 #include "../vendor/mpc.h"
 

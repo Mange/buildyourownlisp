@@ -5,7 +5,7 @@
 #include <editline/readline.h>
 //#include <editline/history.h>
 
-#include "parsing.h"
+#include "parser.h"
 
 int main(int argc, char** argv) {
   char* input;

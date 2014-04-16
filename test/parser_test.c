@@ -1,5 +1,5 @@
 #include <check.h>
-#include "../src/parsing.c"
+#include "../src/parser.c"
 
 START_TEST (parser_test)
 {
@@ -10,7 +10,7 @@ END_TEST
 
 /* Behold my personal Cargo Cult! */
 
-Suite* parsing_suite (void) {
+Suite* parser_suite (void) {
   Suite* suite = suite_create("parser");
   TCase* tcase = tcase_create("case");
   tcase_add_test(tcase, parser_test);
@@ -20,7 +20,7 @@ Suite* parsing_suite (void) {
 
 int main(int argc, char* argv[]) {
   int failed;
-  Suite* suite = parsing_suite();
+  Suite* suite = parser_suite();
   SRunner* runner = srunner_create(suite);
   srunner_run_all(runner, CK_NORMAL);
   failed = srunner_ntests_failed(runner);

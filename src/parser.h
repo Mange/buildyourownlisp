@@ -3,7 +3,28 @@
 
 #include "../vendor/mpc.h"
 
-mpc_parser_t* lispy_parser();
-void cleanup_lispy_parser();
+typedef struct {
+  mpc_parser_t* Number;
+  mpc_parser_t* Operator;
+  mpc_parser_t* Expression;
+  mpc_parser_t* Lispy;
+} lispy_parser;
+
+typedef enum {
+  LISPY_PARSE_OK    =  1,
+  LISPY_PARSE_FAIL  = -1,
+  LISPY_PARSE_ERROR =  0
+} lispy_parse_status;
+
+typedef struct {
+  lispy_parse_status status;
+  mpc_result_t* mpc_result;
+} lispy_result;
+
+lispy_parser* create_lispy_parser();
+void free_lispy_parser(lispy_parser**);
+
+lispy_parse_status parse_lispy_expression(lispy_parser*, char*, char*, lispy_result**);
+void free_lispy_result(lispy_result**);
 
 #endif

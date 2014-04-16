@@ -1,42 +1,63 @@
 #include "parser.h"
 
-static mpc_parser_t* Number;
-static mpc_parser_t* Operator;
-static mpc_parser_t* Expression;
-static mpc_parser_t* Lispy;
+lispy_parser* create_lispy_parser()
+{
+  lispy_parser* parser = malloc(sizeof(lispy_parser));
+  if (parser != NULL)
+  {
+    parser->Number = mpc_new("number");
+    parser->Operator = mpc_new("operator");
+    parser->Expression = mpc_new("expression");
+    parser->Lispy = mpc_new("lispy");
 
-static short parser_is_set_up = 0;
+    mpca_lang(MPC_LANG_DEFAULT,
+        " \
+          number     : /-?[0-9]+/ ; \
+          operator   : '+' | '-' | '*' | '/' ; \
+          expression : <number> | '(' <operator> <expression>+ ')' ; \
+          lispy      : /^/ <operator> <expression>+ /$/ ; \
+        ",
+        parser->Number, parser->Operator, parser->Expression, parser->Lispy);
 
-mpc_parser_t* lispy_parser() {
-  if (parser_is_set_up) {
-    return Lispy;
+    return parser;
   }
-
-  mpc_parser_t* Number = mpc_new("number");
-  mpc_parser_t* Operator = mpc_new("operator");
-  mpc_parser_t* Expression = mpc_new("expression");
-  mpc_parser_t* Lispy = mpc_new("lispy");
-
-  mpca_lang(MPC_LANG_DEFAULT,
-      " \
-        number     : /-?[0-9]+/ ; \
-        operator   : '+' | '-' | '*' | '/' ; \
-        expression : <number> | '(' <operator> <expression>+ ')' ; \
-        lispy      : /^/ <operator> <expression>+ /$/ ; \
-      ",
-      Number, Operator, Expression, Lispy);
-
-  parser_is_set_up = 1;
-  return Lispy;
+  else
+  {
+    return NULL;
+  }
 }
 
-void cleanup_lispy_parser() {
-  mpc_cleanup(4, Number, Operator, Expression, Lispy);
+void free_lispy_parser(lispy_parser** parser_ref) {
+  lispy_parser* parser = *parser_ref;
 
-  Number = NULL;
-  Operator = NULL;
-  Expression = NULL;
-  Lispy = NULL;
+  mpc_cleanup(4, parser->Number, parser->Operator, parser->Expression, parser->Lispy);
 
-  parser_is_set_up = 0;
+  parser->Number = NULL;
+  parser->Operator = NULL;
+  parser->Expression = NULL;
+  parser->Lispy = NULL;
+
+  free(parser);
+  *parser_ref = NULL;
+}
+
+lispy_parse_status parse_lispy_expression(lispy_parser* parser, char* source, char* expression, lispy_result** result)
+{
+  lispy_result *res = malloc(sizeof(lispy_result));
+  *result = res;
+
+  mpc_result_t parser_result;
+
+  if (mpc_parse(source, expression, parser->Lispy, &parser_result))
+  {
+    return LISPY_PARSE_OK;
+  }
+  else
+  {
+    return LISPY_PARSE_ERROR;
+  }
+}
+
+void free_lispy_result(lispy_result** result)
+{
 }

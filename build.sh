@@ -13,4 +13,4 @@ if [ ! -f Makefile ]; then
   cmake ..
 fi
 
-make all test
+CTEST_OUTPUT_ON_FAILURE=1 make all test

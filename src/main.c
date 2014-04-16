@@ -9,7 +9,7 @@
 
 int main(int argc, char** argv) {
   char* input;
-  mpc_parser_t* parser = lispy_parser();
+  lispy_parser* parser = create_lispy_parser();
   mpc_result_t parser_result;
 
   puts("Lispy version 0");
@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
       break;
     } else {
       // TODO: Hide all of this parser stuff behind a facade
-      if (mpc_parse("<stdin>", input, parser, &parser_result)) {
+      if (mpc_parse("<stdin>", input, parser->Lispy, &parser_result)) {
         mpc_ast_print(parser_result.output);
         mpc_ast_delete(parser_result.output);
       } else {

@@ -11,9 +11,8 @@ typedef struct {
 } lispy_parser;
 
 typedef enum {
+  LISPY_PARSE_ERROR =  0,
   LISPY_PARSE_OK    =  1,
-  LISPY_PARSE_FAIL  = -1,
-  LISPY_PARSE_ERROR =  0
 } lispy_parse_status;
 
 typedef struct {

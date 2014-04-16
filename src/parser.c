@@ -50,14 +50,18 @@ lispy_parse_status parse_lispy_expression(lispy_parser* parser, char* source, ch
 
   if (mpc_parse(source, expression, parser->Lispy, &parser_result))
   {
+    res->status = LISPY_PARSE_OK;
     return LISPY_PARSE_OK;
   }
   else
   {
+    res->status = LISPY_PARSE_ERROR;
     return LISPY_PARSE_ERROR;
   }
 }
 
 void free_lispy_result(lispy_result** result)
 {
+  free(*result);
+  *result = NULL;
 }

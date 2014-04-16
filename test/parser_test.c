@@ -14,7 +14,7 @@ START_TEST (api_parsing_results)
   lispy_parser* parser = create_lispy_parser();
   lispy_result* result;
 
-  if (parse_lispy_expression(parser, "<test>", "+ 40 2", &result) != LISPY_PARSE_OK)
+  if (parse_lispy_expression(parser, "<test>", "42", &result) != LISPY_PARSE_OK)
   {
     ck_abort_msg("Parsing failed.");
   }

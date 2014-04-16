@@ -15,7 +15,7 @@ lispy_parser* create_lispy_parser()
           number     : /-?[0-9]+/ ; \
           operator   : '+' | '-' | '*' | '/' ; \
           expression : <number> | '(' <operator> <expression>+ ')' ; \
-          lispy      : /^/ <operator> <expression>+ /$/ ; \
+          lispy      : /^/ (<operator> <expression>+ | <number>) /$/ ; \
         ",
         parser->Number, parser->Operator, parser->Expression, parser->Lispy);
 

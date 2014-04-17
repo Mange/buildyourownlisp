@@ -1,6 +1,9 @@
 #include <check.h>
 #include "../src/parser.c"
 
+void expect_parsing_ok(lispy_parser*, char*);
+void expect_parsing_error(lispy_parser*, char*);
+
 START_TEST (api_freeing_sets_pointer_to_null)
 {
   lispy_parser* parser = create_lispy_parser();
@@ -48,19 +51,82 @@ END_TEST
 START_TEST (grammar_simple_expressions)
 {
   lispy_parser* parser = create_lispy_parser();
-  lispy_result* result;
-  lispy_parse_status parse_status;
+  expect_parsing_ok(parser, "99");
+  expect_parsing_ok(parser, "-1");
+  expect_parsing_ok(parser, "+ 99 1");
+  expect_parsing_ok(parser, "* 1 1 2 3 5 8");
 
-  parse_status = parse_lispy_expression(parser, "<test>", "+ 1 2", &result);
-  if (parse_status == LISPY_PARSE_ERROR)
-  {
-    ck_abort_msg("Could not parse expression \"+ 1 2\"");
-  }
-
-  free_lispy_result(&result);
+  expect_parsing_error(parser, "+");
+  expect_parsing_error(parser, "");
+  expect_parsing_error(parser, "1 2 3");
   free_lispy_parser(&parser);
 }
 END_TEST
+
+START_TEST (grammar_decimal_numbers)
+{
+  lispy_parser* parser = create_lispy_parser();
+  expect_parsing_ok(parser, "1.2");
+  expect_parsing_ok(parser, ".2");
+  expect_parsing_ok(parser, "0.0001");
+  expect_parsing_ok(parser, "9999.0001");
+  expect_parsing_ok(parser, "-1.0");
+  expect_parsing_ok(parser, "0.0");
+  expect_parsing_ok(parser, ".0");
+  expect_parsing_ok(parser, "-.0");
+
+  expect_parsing_error(parser, "-");
+  expect_parsing_error(parser, ".");
+  expect_parsing_error(parser, "--1");
+  expect_parsing_error(parser, "1.1.2");
+  expect_parsing_error(parser, "1.-1");
+  expect_parsing_error(parser, "1.");
+  free_lispy_parser(&parser);
+}
+END_TEST
+
+void expect_parsing_ok(lispy_parser* parser, char* input) {
+  lispy_result* result;
+
+  if(!parse_lispy_expression(parser, "<test>", input, &result))
+  {
+    char *error;
+    mpc_err_print(result->mpc_result->error);
+    if(asprintf(&error, "Could not parse expression \"%s\"", input))
+    {
+      ck_abort_msg(error);
+    }
+    else
+    {
+      ck_abort_msg("Could not parse expression, nor generate a proper error message.");
+    }
+    free(error);
+  }
+
+  free_lispy_result(&result);
+}
+
+void expect_parsing_error(lispy_parser* parser, char* input) {
+  lispy_result* result;
+
+  if(parse_lispy_expression(parser, "<test>", input, &result))
+  {
+    char *error;
+    mpc_ast_print(result->mpc_result->output);
+
+    if(asprintf(&error, "Expected expression \"%s\" to give parse error.", input))
+    {
+      ck_abort_msg(error);
+    }
+    else
+    {
+      ck_abort_msg("Could parse expression, but not generate a proper error message.");
+    }
+    free(error);
+  }
+
+  free_lispy_result(&result);
+}
 
 Suite* parser_suite (void) {
   Suite* suite = suite_create("parser");
@@ -73,6 +139,7 @@ Suite* parser_suite (void) {
 
   TCase* tcase_grammar = tcase_create("Grammar");
   tcase_add_test(tcase_grammar, grammar_simple_expressions);
+  tcase_add_test(tcase_grammar, grammar_decimal_numbers);
   suite_add_tcase(suite, tcase_grammar);
 
   return suite;

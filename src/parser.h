@@ -4,6 +4,8 @@
 #include "../vendor/mpc.h"
 
 typedef struct {
+  mpc_parser_t* Decimal;
+  mpc_parser_t* Integer;
   mpc_parser_t* Number;
   mpc_parser_t* Operator;
   mpc_parser_t* Expression;

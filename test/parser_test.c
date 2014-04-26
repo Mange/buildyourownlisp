@@ -2,7 +2,7 @@
 #include "../src/parser.c"
 
 void expect_parsing_ok(lispy_parser*, char*);
-void expect_parsing_error(lispy_parser*, char*);
+void expect_parse_error(lispy_parser*, char*);
 
 START_TEST (api_freeing_sets_pointer_to_null)
 {
@@ -56,9 +56,9 @@ START_TEST (grammar_simple_expressions)
   expect_parsing_ok(parser, "+ 99 1");
   expect_parsing_ok(parser, "* 1 1 2 3 5 8");
 
-  expect_parsing_error(parser, "+");
-  expect_parsing_error(parser, "");
-  expect_parsing_error(parser, "1 2 3");
+  expect_parse_error(parser, "+");
+  expect_parse_error(parser, "");
+  expect_parse_error(parser, "1 2 3");
   free_lispy_parser(&parser);
 }
 END_TEST
@@ -75,12 +75,12 @@ START_TEST (grammar_decimal_numbers)
   expect_parsing_ok(parser, ".0");
   expect_parsing_ok(parser, "-.0");
 
-  expect_parsing_error(parser, "-");
-  expect_parsing_error(parser, ".");
-  expect_parsing_error(parser, "--1");
-  expect_parsing_error(parser, "1.1.2");
-  expect_parsing_error(parser, "1.-1");
-  expect_parsing_error(parser, "1.");
+  expect_parse_error(parser, "-");
+  expect_parse_error(parser, ".");
+  expect_parse_error(parser, "--1");
+  expect_parse_error(parser, "1.1.2");
+  expect_parse_error(parser, "1.-1");
+  expect_parse_error(parser, "1.");
   free_lispy_parser(&parser);
 }
 END_TEST
@@ -106,7 +106,7 @@ void expect_parsing_ok(lispy_parser* parser, char* input) {
   free_lispy_result(&result);
 }
 
-void expect_parsing_error(lispy_parser* parser, char* input) {
+void expect_parse_error(lispy_parser* parser, char* input) {
   lispy_result* result;
 
   if(parse_lispy_expression(parser, "<test>", input, &result))
